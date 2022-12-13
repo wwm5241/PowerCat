@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-sts
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: mysql
+  serviceName: mysql-svc
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: "1"
+        - name: MYSQL_DATABASE # 구성할 database명
+          value: "wordpress"
+        - name: MYSQL_USER # database에 권한이 있는 user
+          value: "user"
+        - name: MYSQL_ROOT_HOST # 접근 호스트
+          value: '%'
+        - name: MYSQL_PASSWORD # database에 권한이 있는 user의 패스워드
+          value: "qwer1234"
+#        livenessProbe:
+#          httpGet:
+#            path: /
+#            port: 8080
+#        readinessProbe:
+#          exec:
+#            command:
+#              - ls
+#              - /var/
+
+
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-pv
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-pv
+        persistentVolumeClaim:
+          claimName: mysql-pvc
