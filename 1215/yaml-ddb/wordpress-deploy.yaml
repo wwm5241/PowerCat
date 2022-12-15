@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-deploy
+  labels:
+    app: wordpress
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: frontend
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 10
+            preference:
+              matchExpressions:
+              - key: tier
+                operator: In
+                values:
+                - frontend
+      containers:
+#      - image: wordpress:php8.1-apache
+      - image: wwm5241/powercat:7.0
+        name: wordpress
+        env:
+        - name: WORDPRESS_DB_NAME
+          value: "wordpress"
+        - name: WORDPRESS_DB_USER
+          value: "wordpress-mysql"
+        - name: WORDPRESS_DB_HOST
+          value: "wordpress-mysql"
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+#        livenessProbe:
+#          exec:
+#            command:
+#            - ls
+#            - /var/www/html
+#        readinessProbe:
+#          exec:
+#            command:
+#            - ls
+#            - /var/www/html
+        ports:
+        - containerPort: 80
+          name: wordpress
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 45
+          periodSeconds: 60
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 45
+          periodSeconds: 60
+#        volumeMounts:
+#        - name: wordpress-pv
+#          mountPath: /var/www/html
+#      volumes:
+#      - name: wordpress-pv
+#        persistentVolumeClaim:
+#          claimName: wordpress-pvc

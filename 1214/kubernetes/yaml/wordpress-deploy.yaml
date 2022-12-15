@@ -29,9 +29,13 @@ spec:
 #                values:
 #                - frontend
       containers:
-      - image: wordpress:4.8-apache
+      - image: wwm5241/powercat:1.0
         name: wordpress
         env:
+        - name: WORDPRESS_DB_NAME
+          value: wordpress-mysql
+        - name: WORDPRESS_DB_USER
+          value: wordpress-mysql
         - name: WORDPRESS_DB_HOST
           value: wordpress-mysql
         - name: WORDPRESS_DB_PASSWORD
@@ -39,19 +43,29 @@ spec:
             secretKeyRef:
               name: mysql-pass
               key: password
-        livenessProbe:
-          exec:
-            command:
-              - cat
-              - /var/www/html/index.php
-        readinessProbe:
-          exec:
-            command:
-              - ls
-              - /var/www/html
+#        livenessProbe:
+#          exec:
+#            command:
+#            - ls
+#            - /var/www/html
+#        readinessProbe:
+#          exec:
+#            command:
+#            - ls
+#            - /var/www/html
         ports:
         - containerPort: 80
           name: wordpress
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 45
+          periodSeconds: 60
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 45
+          periodSeconds: 60
         volumeMounts:
         - name: wordpress-pv
           mountPath: /var/www/html
