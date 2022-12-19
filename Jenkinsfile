@@ -1,9 +1,10 @@
+
 node {
      stage('Clone repository') {
          checkout scm
      }
      stage('Build image') {
-         app = docker.build("sjin1105/django")
+         app = docker.build("wwm5241/powercat")
      }
      stage('Push image') {
          docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
@@ -12,4 +13,3 @@ node {
      }
      
 }
-Footer
