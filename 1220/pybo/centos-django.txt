@@ -1,0 +1,300 @@
+# CentOS에서 파이썬 설치
+
+1. 파이썬 저장소 설치
+
+sudo yum -y install centos-release-scl
+
+2. 파이썬 설치
+
+sudo yum -y install rh-python36
+
+3. 가상 환경 세팅
+
+mkdir my_django_appcd my_django_app
+scl enable rh-python36 bash
+
+- 가상 환경 source 디렉토리 만들기
+
+mkdir ~/venvs
+cd ~/venvs
+
+홈 디렉토리 밑에 만들 것을 권장
+
+- 파이썬 모듈 중 venv라는 모듈을 사용하여 가상 환경 진입
+
+python3 -m venv [가상 환경 이름]
+python3 -m venv koo
+
+source koo/bin/activate
+
+=> shell 맨 왼쪽에 (가상 환경 이름)이 나오면 성공
+
+※ 가상 환경에서 장고 설치 진행 후 SQLITE를 진행해야 버전 이슈 해결됨
+
+4. 장고 설치
+
+
+pip install django
+
+=> 'pip install --upgrade pip'업그레이드가 필요하다고 에러가 나옴
+
+pip install --upgrade pip
+
+pip install django
+
+장고 재설치하면 에러없이 설치 완료
+
+
+[Python] Django 실행 시 sqlite3 버전 이슈
+
+https://joycecoder.tistory.com/109
+
+
+1. wget 설치
+
+sudo yum -y install wget
+
+2. sqlite 설치
+
+- 폴더 이동
+
+cd /opt/
+
+- sqlite 사이트에서 최신 버전 다운
+
+https://sqlite.org/download.html 에서 autoconf를 wget으로 다운 받기
+
+sudo wget https://sqlite.org/2022/sqlite-autoconf-3390400.tar.gz
+=> 에러 발생 > 읽어보면 옵션에 --no-check-certificate 추가하라고 함
+
+sudo wget --no-check-certificate https://sqlite.org/2022/sqlite-autoconf-3390400.tar.gz
+
+- 압축 풀기
+
+sudo tar -zxvf sqlite-autoconf-3390400.tar.gz
+
+cd sqlite-autoconf-3390400/
+
+
+- sqlite 설치하기
+
+sudo ./configure
+
+=> o acceptable C compiler found in $PATH 에러 메세지
+
+- CentOS에서 컴파일 에러 메세지 해결을 위한 gcc 설치
+
+sudo yum -y install gcc
+
+- sqlite 재설치하기
+
+sudo ./configure
+
+sudo make clean && sudo make -j 20 && sudo make install
+
+(시간이 오래 걸리니 기다릴 것..)
+
+- 설치 버전 확인
+
+sqlite3 --version
+
+=> 다운 받은 SQLITE와 버전이 같으면 설치 완료
+
+3. 파이썬에 sqlite 적용하기
+
+- 백업 후 라이브러리 이동
+
+sudo /bin/cp -rf /usr/lib64/libsqlite3.so.0.8.6 /usr/lib64/libsqlite3.so.0.8.6_bak
+sudo /bin/cp -rf /usr/local/lib/libsqlite3.so.0.8.6 /usr/lib64/libsqlite3.so.0.8.6
+
+※ 라이브러리 경로 확인
+sudo find /usr/ -name libsqlite3.so.0.8.6
+
+- sqlite 버전 확인
+
+python
+>>> import sqlite3
+>>> sqlite3.sqlite_version
+
+
+※ 가상 환경에서 파이썬 설치 진행 후 SQLITE를 진행해야 버전 이슈 해결됨
+
+
+# 센토스 CLI모드에서  GUI모드로 전환
+
+[CentOS 모드 - Run level]
+Run level 0 : power off
+Run level 1 : recuse 시스템 복구 모드
+Run level 2 (multi-user) : 네트워크를 사용하지 않는 텍스트 유저 모드를 뜻하며, CetnOS 7 부터 사용하지 않고, Run level3과 동일 취급
+Run level 3 (full multi-user) : 텍스트 유저 모드
+Run level 4 (multil-user) : 사용x run level 3과 동일하게 취급
+Run level 5 (graphical) : 그래픽 모드의 다중 사용자 모드
+Run level 6 (reboot) : 재시작
+
+- 현재 모드 확인
+
+systemctl get-default
+
+- GUI로 모드 전환
+
+sudo systemctl set-default graphical.target
+
+- GUI 환경에 필요한 패키지를 설치
+
+sudo yum -y groupinstall "GNOME Desktop" "Graphical Administration Tools"
+
+- 패키지 설치 후 재시작
+
+sudo shutdown -r now
+
+
+# 장고 프로젝트 생성하기
+
+- 파이썬 가상 환경 전환
+
+source ~/venvs/koo/bin/activate
+
+
+- 프로젝트 디렉토리 생성
+
+mkdir -p ~/projects/koo
+
+cd ~/projects/koo
+
+- 장고 프로젝트 생성
+
+django-admin startproject config .
+
+
+- 장고 서버 구동
+
+python manage.py runserver
+
+- 웹 브라우저에 해당 아이피 접속
+
+=> 장고 서버에 접속되면 구동 성공
+
+
+
+# 장고 서버 구성하기
+
+sudo hostnamectl set-hostname python.jayounkoo.com
+bash
+
+
+=======
+
+장고서버를 띄울 때 웹서버를 같이 띄어야하는 이유
+
+https://cocook.tistory.com/87
+
+
+
+
+$ sudo firewall-cmd --add-port=8000/tcp --permanent
+$ sudo firewall-cmd --reload
+$ sudo firewall-cmd --list-all
+
+==============
+
+# 한글과 시간 설정을 바꾸기 위해 settings.py
+
+```
+~~~
+# Internationalization
+# https://docs.djangoproject.com/en/4.1/topics/i18n/
+
+LANGUAGE_CODE = 'ko-kr'
+
+TIME_ZONE = 'Asia/Seoul'
+~~~
+```
+
+# pybo 앱 생성
+
+django-admin startapp pybo
+
+# pybo 페이지 요청
+
+http://localhost:8000/pybo
+
+
+# 슈퍼유저 생성
+
+(koo) [user@python koo]$ python manage.py createsuperuser
+사용자 이름 (leave blank to use 'user'): koo
+이메일 주소: koo@koo.com
+Password: 1234
+Password (again): 1234
+비밀번호가 너무 짧습니다. 최소 8 문자를 포함해야 합니다.
+비밀번호가 너무 일상적인 단어입니다.
+비밀번호가 전부 숫자로 되어 있습니다.
+Bypass password validation and create user anyway? [y/N]: y
+Superuser created successfully.
+
+
+
+
+# 오류 페이지
+
+http://localhost:8000/pybo/99/ 요청하면
+=> "GET /pybo/99/ HTTP/1.1" 500 70223
+없는 데이터를 요청할 경우 505 보다 404 오류 페이지가 바람직하다.
+
+
+※
+오류코드	설명
+200	성공 (OK)
+500	서버오류 (Internal Server Error )
+404	서버가 요청한 페이지(Resource)를 찾을 수 없음 (Not Found)
+
+
+
+# CentSO 7에  Git 설치
+
+## 2.x 버전의 Git 설치하기
+
+- Git 리포지토리 설치
+sudo yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
+
+- Git 설치
+
+sudo yum -y install git
+
+- Git 버전 확인
+
+git --version
+
+=> Git 버전이 2.x 로 확인되면 성공
+
+※ 참고 사이트
+https://computingforgeeks.com/install-git-2-on-centos-7/
+
+# Git clone을 이용하여 pybo 개발 사이트 가져오기
+
+git clone https://github.com/KOOJAYOUN/pybo.git mysite
+
+ls
+=> mysite 디렉토리가 확인되면 clone 성공
+
+# Centos에서 pybo 사이트 띄우기
+
+cd mysite/
+
+python manage.py runserver
+
+=> 에러 발생 - makedown에 대한 문제가 있다 해당 문제를 삭제하자
+
+vim pybo/templatetags/pybo_filter.py
+
+
+python manage.py migrate
+ls
+python manage.py makemigrations
+python manage.py runserver 0:8000
+vim pybo/templatetags/pybo_filter.py
+
+
+
+
+
