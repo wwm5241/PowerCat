@@ -1,0 +1,3 @@
+[submodule "fluent-bit-kubernetes-logging"]
+	path = fluent-bit-kubernetes-logging
+	url = https://github.com/fluent/fluent-bit-kubernetes-logging.git
