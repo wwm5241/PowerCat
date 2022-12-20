@@ -1,0 +1,7 @@
+pybo/views.py 분리 전 백업한 파일
+
+<사용 시>
+~/pybo/views 폴더를 삭제 하고
+urls.py 와 views.py 를 ~/pybo에 넣을 것
+
+config/urls.py 는 ~/config 폴더에 넣을 것

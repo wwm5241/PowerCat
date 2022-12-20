@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> bdbb9530977df44990c0a64f26990fd22da35a08
 # Kubernetes Logging with Fluent Bit
 
 > :warning: This repository is no longer maintained. Please use the [charts](https://github.com/fluent/helm-charts/tree/main/charts/fluent-bit) from the [Fluent Bit Helm Chart](https://github.com/fluent/helm-charts) project.
