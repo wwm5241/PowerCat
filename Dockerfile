@@ -1,4 +1,13 @@
-FROM wordpress:php8.1-apache
-# COPY wp-config.php      /var/www/html/wp-config.php
-# COPY ./bookly-responsive-appointment-booking-tool/ /var/www/html/wp-content/plugins/bookly-responsive-appointment-booking-tool
-# RUN ["tar","-x","/var/www/html/wp-content/plugins/bookly-responsive-appointment-booking-tool.tar"]
+FROM python:3.9-alpine3.17
+WORKDIR /django/mysite/
+COPY requirements.txt .
+RUN apk update
+RUN apk add gcc musl-dev mariadb-connector-c-dev 
+RUN pip3 install -r requirements.txt --no-cache-dir
+RUN apk del gcc musl-dev
+
+COPY ./django/mysite/ .
+
+COPY shell.sh .
+RUN chmod +x shell.sh
+CMD ["./shell.sh"]
