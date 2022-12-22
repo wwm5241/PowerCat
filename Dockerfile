@@ -6,7 +6,7 @@ RUN apk add gcc musl-dev mariadb-connector-c-dev
 RUN pip3 install -r requirements.txt --no-cache-dir
 RUN apk del gcc musl-dev
 
-COPY pybo .
+COPY ./pybo/ .
 
 COPY shell.sh .
 RUN chmod +x shell.sh
