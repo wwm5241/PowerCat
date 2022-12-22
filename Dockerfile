@@ -1,5 +1,5 @@
 FROM python:3.9-alpine3.17
-WORKDIR /pybo
+WORKDIR /pybo/
 COPY requirements.txt .
 RUN apk update
 RUN apk add gcc musl-dev mariadb-connector-c-dev 
