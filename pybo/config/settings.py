@@ -81,14 +81,15 @@ CRONJOBS = [
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-     'default': {
+    'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'django',
         'USER' : 'vagrant',
         'PASSWORD' : 'vagrant123',
-        'HOST' : 'powercat.cncglcvnteny.us-east-1.rds.amazonaws.com',
-        'PORT' : '3306',
+        'HOST' : 'mycluster.mysql-cluster.svc.cluster.local',
+        'PORT' : '6447',
     },
+    
 }
 
 
