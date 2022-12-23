@@ -1,6 +1,5 @@
 Django
 environs
 django-crontab
-default-libmysqlclient-dev
 mysqlclient
 markdown
