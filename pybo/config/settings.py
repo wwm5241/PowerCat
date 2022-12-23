@@ -74,7 +74,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 CRONJOBS = [
-    ('0 6 * * *', 'pybo.cron.delete_answer','>> /home/vagrant/django.log'),
+    ('0 6 * * *', 'pybo.cron.delete_answer', '>> /home/vagrant/django.log'),
 ]
 
 # Database
