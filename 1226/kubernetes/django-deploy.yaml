@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-deploy
+  labels:
+    app: django
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: django
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: django
+        tier: frontend
+    spec:
+#      affinity:
+#        nodeAffinity:
+#          preferredDuringSchedulingIgnoredDuringExecution:
+#          - weight: 10
+#            preference:
+#              matchExpressions:
+#              - key: tier
+#                operator: In
+#                values:
+#                - frontend
+      containers:
+      - image: wwm5241/powercat:15
+        name: django
+#        livenessProbe:
+#          exec:
+#            command:
+#              - ls -l
+#              - /var
+#        readinessProbe:
+#          exec:
+#            command:
+#              - ls
+#              - /var
+        ports:
+        - containerPort: 8000
+          name: django
+          protocol: TCP
